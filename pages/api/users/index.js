@@ -15,14 +15,15 @@ class UsersHandler {
 
   async POST(request, response) {
     try {
-      const { email } = await request.body;
+      const { name, email } = await request.body;
       const updateUsers = await query({
-        query: "INSERT INTO users (email) VALUES (?)",
-        values: [email],
+        query: "INSERT INTO users (name, email) VALUES (?, ?)",
+        values: [name, email],
       });
       const result = updateUsers.affectedRows;
       let message = result ? "success" : "error";
       const user = {
+        name: name,
         email: email,
       };
       response.status(200).json({
