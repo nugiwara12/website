@@ -1,9 +1,9 @@
 "use client"
 
 import React from 'react'
-import Sidenav from '../../components/Sidenav'
+import Sidenav from '../../components/Sidebar'
 
-const Home = () => {
+const Dashboard = () => {
     return (
         <>
             <Sidenav />
@@ -11,4 +11,4 @@ const Home = () => {
     )
 }
 
-export default Home
+export default Dashboard
