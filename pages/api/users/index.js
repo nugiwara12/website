@@ -1,24 +1,65 @@
-export default function handler(req, res) {
-    // Define the users array
-    const users = [
-        {
-            id: 1,
-            name: "jc sarmiento",
-            email: "jacinto011200@gmail.com",
-        },
-        {
-            id: 2,
-            name: "Rineir Mercado",
-            email: "reiniergmail.com",
-        }
-    ];
+import { query } from "@/lib/db";
 
-    // Define the response object
-    const response = {
-        success: true,
-        data: users,
-    };
+class UsersHandler {
+  async GET(request, response) {
+    try {
+      const users = await query({
+        query: "SELECT * FROM users",
+        values: [],
+      });
+      response.status(200).json(users);
+    } catch (error) {
+      response.status(500).json({ error: error.message });
+    }
+  }
 
-    // Send the response with a 200 status code and the response object in JSON format
-    res.status(200).json(response);
+  async POST(request, response) {
+    try {
+      const { email } = await request.body;
+      const updateUsers = await query({
+        query: "INSERT INTO users (email) VALUES (?)",
+        values: [email],
+      });
+      const result = updateUsers.affectedRows;
+      let message = result ? "success" : "error";
+      const user = {
+        email: email,
+      };
+      response.status(200).json({
+        message: message,
+        product: user,
+      });
+    } catch (error) {
+      response.status(500).json({ error: error.message });
+    }
+  }
+
+  async PUT(request, response) {
+    // Handle PUT request
+  }
+
+  async DELETE(request, response) {
+    // Handle DELETE request
+  }
+
+  handleRequest(request, response) {
+    const method = request.method.toUpperCase();
+    if (method === "GET") {
+      this.GET(request, response);
+    } else if (method === "POST") {
+      this.POST(request, response);
+    } else if (method === "PUT") {
+      this.PUT(request, response);
+    } else if (method === "DELETE") {
+      this.DELETE(request, response);
+    } else {
+      response.status(405).json({ message: "Method Not Allowed" });
+    }
+  }
+}
+
+const usersHandler = new UsersHandler();
+
+export default function handler(request, response) {
+  usersHandler.handleRequest(request, response);
 }

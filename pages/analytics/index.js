@@ -1,15 +1,16 @@
-"use client"
+"use client";
 
-import React from 'react'
-import Sidebar from '../../components/Sidebar'
+import React from "react";
+import Layout from "../../components/Layout";
 
 const Analytics = () => {
-    return (
-        <>
-            <Sidebar />
-            <h2>Analythics</h2>
-        </>
-    )
-}
+  return (
+    <>
+      <Layout>
+        <div>Analythics</div>
+      </Layout>
+    </>
+  );
+};
 
-export default Analytics
+export default Analytics;
