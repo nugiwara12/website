@@ -75,8 +75,8 @@ export default function Layout({ children }) {
       <List>
         {[
           { text: "Dashboard", icon: <MdDashboard /> },
-          { text: "Analytics", icon: <IoAnalyticsSharp /> },
           { text: "Users", icon: <LuUsers /> },
+          { text: "Analytics", icon: <IoAnalyticsSharp /> },
           { text: "Project", icon: <IoMdBriefcase /> },
           { text: "Message", icon: <TiMessage /> },
           { text: "Setting", icon: <IoIosSettings /> },
