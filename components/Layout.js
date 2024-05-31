@@ -70,7 +70,10 @@ export default function Layout({ children }) {
 
   const drawer = (
     <div>
-      <img src="/logo/logo.png" alt="logo" className="h-10 w-10" />
+      <div className="flex justify-center items-center text-center ">
+        {" "}
+        <img src="/logo/logo.png" alt="logo" className="h-32 w-32" />
+      </div>
       <Divider />
       <List>
         {[
