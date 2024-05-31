@@ -29,6 +29,7 @@ import { IoIosSettings } from "react-icons/io";
 import { FaRegUser } from "react-icons/fa";
 import { useRouter } from "next/navigation";
 import { usePathname } from "next/navigation";
+import BackTop from "./BacktoTop/BacktoTop";
 
 const drawerWidth = 240;
 
@@ -183,6 +184,7 @@ export default function Layout({ children }) {
           open
         >
           {drawer}
+          <BackTop />
         </Drawer>
       </Box>
       <Box
