@@ -5,3 +5,8 @@
 body {
   background-color: whitesmoke;
 }
+
+.roundprogress {
+  height: 50px;
+  width: 50px;
+}
