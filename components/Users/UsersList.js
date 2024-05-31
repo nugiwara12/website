@@ -7,16 +7,16 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
+import { format } from "date-fns";
 import Button from "@mui/material/Button";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import { ToastContainer, toast, Bounce } from "react-toastify";
 import UsersDetails from "./UsersDetails";
-
-import { format } from "date-fns";
+import "react-confirm-alert/src/react-confirm-alert.css"; // Import css
+import PersonSearchIcon from "@mui/icons-material/PersonSearch";
 import { FaEdit } from "react-icons/fa";
 import { RiDeleteBin7Fill } from "react-icons/ri";
 import { confirmAlert } from "react-confirm-alert"; // Import
-import "react-confirm-alert/src/react-confirm-alert.css"; // Import css
 
 import axios from "axios";
 
@@ -25,6 +25,7 @@ export default function UserList() {
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
   const [data, setData] = useState([]);
+  const [alldata, setAllData] = useState([]);
   const [rows, setRows] = useState(null);
 
   const [loading, setLoading] = useState(true);
@@ -32,10 +33,35 @@ export default function UserList() {
   const handleAddUserClose = () => {
     setAddUser(false);
   };
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     getData();
   }, [addUser]);
+
+  useEffect(() => {
+    searchData(searchQuery);
+  }, [searchQuery]);
+
+  const clearSearch = () => {
+    setSearchQuery("");
+  };
+
+  const searchData = (searchQuery) => {
+    let filterData = data;
+    if (searchQuery) {
+      filterData = data.filter(
+        (usr) =>
+          usr.id.toString().toLowerCase().includes(searchQuery.toLowerCase()) ||
+          usr.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          usr.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          usr.role.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+      setData(filterData);
+    } else {
+      setData(alldata);
+    }
+  };
 
   const getData = () => {
     axios
@@ -43,6 +69,7 @@ export default function UserList() {
       .then((response) => {
         console.log("Data", response);
         setData(response.data);
+        setAllData(response.data);
         setLoading(false);
       })
       .catch((err) => {
@@ -135,8 +162,29 @@ export default function UserList() {
         <UsersDetails handleAddUserClose={handleAddUserClose} rows={rows} />
       ) : (
         <>
+          {" "}
+          <h1 className="font-bold mb-4">Users</h1>
           <div className="flex justify-between mb-2">
-            <h1 className="font-bold mb-4">Users</h1>
+            <div className="relative flex items-center w-2xl h-12 rounded-lg focus-within:shadow-lg bg-white overflow-hidden">
+              <div className="grid place-items-center h-full w-12 text-gray-300">
+                <PersonSearchIcon />
+              </div>
+              <input
+                className="peer h-full w-full outline-none text-sm text-gray-700 pr-10"
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search something.."
+              />
+              {searchQuery && (
+                <button
+                  className="absolute right-2 grid place-items-center h-full w-8 text-gray-400 hover:text-gray-600"
+                  onClick={clearSearch}
+                >
+                  ✕
+                </button>
+              )}
+            </div>
 
             <Button
               variant="outlined"
