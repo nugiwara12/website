@@ -7,9 +7,10 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
-
-import { Bounce } from "react-toastify";
-import { ToastContainer, toast } from "react-toastify";
+import Button from "@mui/material/Button";
+import AddCircleIcon from "@mui/icons-material/AddCircle";
+import { ToastContainer, toast, Bounce } from "react-toastify";
+import UsersDetails from "./UsersDetails";
 
 import { format } from "date-fns";
 import { FaEdit } from "react-icons/fa";
@@ -24,11 +25,17 @@ export default function UserList() {
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
   const [data, setData] = useState([]);
+  const [rows, setRows] = useState(null);
+
   const [loading, setLoading] = useState(true);
+  const [addUser, setAddUser] = useState(false);
+  const handleAddUserClose = () => {
+    setAddUser(false);
+  };
 
   useEffect(() => {
     getData();
-  }, []);
+  }, [addUser]);
 
   const getData = () => {
     axios
@@ -53,7 +60,13 @@ export default function UserList() {
   };
 
   const editRecord = (row) => {
-    console.log("Row", row);
+    setRows(row);
+    setAddUser(true);
+  };
+
+  const addRecord = (row) => {
+    setRows(null);
+    setAddUser(true);
   };
 
   const deleteRecord = async (row) => {
@@ -118,74 +131,96 @@ export default function UserList() {
   return (
     <>
       <ToastContainer />
-      <Paper sx={{ width: "100%", overflow: "hidden" }}>
-        <TableContainer sx={{ maxHeight: 440 }}>
-          <Table stickyHeader aria-label="sticky table">
-            <TableHead>
-              <TableRow>
-                <TableCell align="right" style={{ minWidth: 70 }}>
-                  ID
-                </TableCell>
-                <TableCell align="right" style={{ minWidth: 170 }}>
-                  Name
-                </TableCell>
-                <TableCell align="right" style={{ minWidth: 170 }}>
-                  Email
-                </TableCell>
-                <TableCell align="right" style={{ minWidth: 170 }}>
-                  Role
-                </TableCell>
-                <TableCell align="right" style={{ minWidth: 170 }}>
-                  Create_At
-                </TableCell>
-                <TableCell align="center" style={{ minWidth: 170 }}>
-                  Action
-                </TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {data
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((row) => (
-                  <TableRow hover role="checkbox" tabIndex={-1} key={row.id}>
-                    <TableCell align="right">{row.id}</TableCell>
-                    <TableCell align="right">{row.name}</TableCell>
-                    <TableCell align="right">{row.email}</TableCell>
-                    <TableCell align="right">{row.role}</TableCell>
-                    <TableCell align="right">
-                      {dateFormatter(row.created_at)}
+      {addUser ? (
+        <UsersDetails handleAddUserClose={handleAddUserClose} rows={rows} />
+      ) : (
+        <>
+          <div className="flex justify-between mb-2">
+            <h1 className="font-bold mb-4">Users</h1>
+
+            <Button
+              variant="outlined"
+              onClick={() => addRecord()}
+              startIcon={<AddCircleIcon />}
+            >
+              Add User
+            </Button>
+          </div>
+          <Paper sx={{ width: "100%", overflow: "hidden" }}>
+            <TableContainer sx={{ maxHeight: 440 }}>
+              <Table stickyHeader aria-label="sticky table">
+                <TableHead>
+                  <TableRow>
+                    <TableCell align="right" style={{ minWidth: 70 }}>
+                      ID
                     </TableCell>
-                    <TableCell align="right">
-                      <div className="flex justify-center space-x-3">
-                        <div
-                          className="cursor-pointer bg-green-600 text-white rounded-full p-2 flex items-center justify-center w-8 h-8"
-                          onClick={() => editRecord(row)}
-                        >
-                          <FaEdit />
-                        </div>
-                        <div
-                          className="cursor-pointer bg-red-600 text-white rounded-full p-2 flex items-center justify-center w-8 h-8"
-                          onClick={() => deleteRecord(row)}
-                        >
-                          <RiDeleteBin7Fill />
-                        </div>
-                      </div>
+                    <TableCell align="right" style={{ minWidth: 170 }}>
+                      Name
+                    </TableCell>
+                    <TableCell align="right" style={{ minWidth: 170 }}>
+                      Email
+                    </TableCell>
+                    <TableCell align="right" style={{ minWidth: 170 }}>
+                      Role
+                    </TableCell>
+                    <TableCell align="right" style={{ minWidth: 170 }}>
+                      Create_At
+                    </TableCell>
+                    <TableCell align="center" style={{ minWidth: 170 }}>
+                      Action
                     </TableCell>
                   </TableRow>
-                ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-        <TablePagination
-          rowsPerPageOptions={[10, 25, 100]}
-          component="div"
-          count={data.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-        />
-      </Paper>
+                </TableHead>
+                <TableBody>
+                  {data
+                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                    .map((row) => (
+                      <TableRow
+                        hover
+                        role="checkbox"
+                        tabIndex={-1}
+                        key={row.id}
+                      >
+                        <TableCell align="right">{row.id}</TableCell>
+                        <TableCell align="right">{row.name}</TableCell>
+                        <TableCell align="right">{row.email}</TableCell>
+                        <TableCell align="right">{row.role}</TableCell>
+                        <TableCell align="right">
+                          {dateFormatter(row.created_at)}
+                        </TableCell>
+                        <TableCell align="right">
+                          <div className="flex justify-center space-x-3">
+                            <div
+                              className="cursor-pointer bg-green-600 text-white rounded-full p-2 flex items-center justify-center w-8 h-8"
+                              onClick={() => editRecord(row)}
+                            >
+                              <FaEdit />
+                            </div>
+                            <div
+                              className="cursor-pointer bg-red-600 text-white rounded-full p-2 flex items-center justify-center w-8 h-8"
+                              onClick={() => deleteRecord(row)}
+                            >
+                              <RiDeleteBin7Fill />
+                            </div>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+            <TablePagination
+              rowsPerPageOptions={[10, 25, 100]}
+              component="div"
+              count={data.length}
+              rowsPerPage={rowsPerPage}
+              page={page}
+              onPageChange={handleChangePage}
+              onRowsPerPageChange={handleChangeRowsPerPage}
+            />
+          </Paper>
+        </>
+      )}
     </>
   );
 }

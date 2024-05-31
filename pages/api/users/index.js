@@ -4,7 +4,7 @@ class UsersHandler {
   async GET() {
     try {
       const users = await query({
-        query: "SELECT * FROM users",
+        query: "SELECT * FROM users ORDER BY id DESC",
         values: [],
       });
       console.log("GET Data:", users); // Log fetched data
@@ -18,24 +18,57 @@ class UsersHandler {
   async POST(data) {
     try {
       const { name, email, role } = data;
+
+      // Validate input data
       if (!name || !email || !role) {
         throw new Error("Missing parameters: name, email, role");
       }
+
+      // Log the input data
       console.log("POST Data:", data);
+
+      // Execute the query to insert the user
       const updateUsers = await query({
         query: "INSERT INTO users (name, email, role) VALUES (?, ?, ?)",
         values: [name, email, role],
       });
+
+      // Check the result of the query execution
       const result = updateUsers.affectedRows;
-      let message = result ? "success" : "error";
+      const message = result ? "success" : "error";
+
+      // Log the result and the user data
       const user = { name, email, role };
       console.log("POST Result:", result, user);
       return { status: 200, message, data: user };
     } catch (error) {
-      console.error("POST Error:", error);
+      // Log the error with detailed information
+      console.error("POST Error:", error.message, error.stack);
+
       return { status: 500, error: error.message };
     }
   }
+
+  //   try {
+  //     const { name, email, role } = data;
+  //     if (!name || !email || !role) {
+  //       throw new Error("Missing parameters: name, email, role");
+  //     }
+  //     console.log("POST Data:", data);
+  //     const updateUsers = await query({
+  //       query: "INSERT INTO users (name, email, role) VALUES (?, ?, ?)",
+  //       values: [name, email, role],
+  //     });
+  //     const result = updateUsers.affectedRows;
+  //     let message = result ? "success" : "error";
+  //     const user = { name, email, role };
+  //     console.log("POST Result:", result, user);
+  //     return { status: 200, message, data: user };
+  //   } catch (error) {
+  //     console.error("POST Error:", error);
+  //     return { status: 500, error: error.message };
+  //   }
+  // }
 
   async PUT(data) {
     try {

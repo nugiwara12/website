@@ -5,67 +5,124 @@ import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Button from "@mui/material/Button";
 import Select from "@mui/material/Select";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import { ToastContainer, toast } from "react-toastify";
+import { ToastContainer, toast, Bounce } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { Bounce } from "react-toastify";
 import axios from "axios";
 
 const schema = yup
   .object({
     name: yup.string().required("Please Enter Your Name"),
-    email: yup.string().email().required("Please Enter Yout Email"),
+    email: yup.string().email().required("Please Enter Your Email"),
   })
   .required();
 
-const UsersDetails = () => {
-  const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(true);
+const UsersDetails = ({ handleAddUserClose, rows }) => {
   const [urole, setUrole] = useState("User");
+
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm({
     resolver: yupResolver(schema),
   });
-  const onSubmit = (data) => {
-    Object.assign(data, { role: urole });
-    console.log(data);
 
-    axios.post("/api/users", data).then((response) => {
-      console.log("Data", response);
-      setData(response.data);
-      setLoading(false);
+  useEffect(() => {
+    if (rows) {
+      setUrole(rows.role);
+      reset({
+        id: rows.id,
+        name: rows.name,
+        email: rows.email,
+      });
+    }
+  }, []);
 
-      if (response.data.message === "success") {
-        toast.success("Data Added Successfully!", {
-          position: "top-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-          transition: Bounce,
-        });
+  const onSubmit = async (data) => {
+    try {
+      data.role = urole; // Assign the selected role to the data
+      console.log("Submitted Data:", data);
+
+      if (rows) {
+        const response = await axios.put("/api/users", data);
+        console.log("Response Data:", response);
+
+        if (response.data.message === "success") {
+          toast.success("Data Updated Successfully!", {
+            position: "top-right",
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
+            transition: Bounce,
+          });
+          handleAddUserClose(); // Close the add user dialog
+        } else {
+          toast.error("Failed to add data.", {
+            position: "top-right",
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
+            transition: Bounce,
+          });
+        }
       } else {
-        toast.error("Failed to add data.", {
-          position: "top-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-          transition: Bounce,
-        });
+        const response = await axios.post("/api/users", data);
+        console.log("Response Data:", response);
+
+        if (response.data.message === "success") {
+          toast.success("Data Added!", {
+            position: "top-right",
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
+            transition: Bounce,
+          });
+          handleAddUserClose(); // Close the add user dialog
+        } else {
+          toast.error("Failed to add data.", {
+            position: "top-right",
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
+            transition: Bounce,
+          });
+        }
       }
-    });
+    } catch (error) {
+      console.error("Error:", error);
+      toast.error("An error occurred while adding data.", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
+    }
   };
 
   const handleChange = (event) => {
@@ -74,7 +131,13 @@ const UsersDetails = () => {
 
   return (
     <>
-      <ToastContainer />
+      <div className="flex items-center mb-4">
+        <ArrowBackIcon
+          className="cursor-pointer text-blue-500 hover:text-blue-700 mr-2"
+          onClick={() => handleAddUserClose()}
+        />
+        <h1 className="text-md font-bold text-gray-800">Add Users</h1>
+      </div>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="grid sm:grid-cols-1 md:grid-cols-3 gap-5">
           <div>
@@ -117,7 +180,7 @@ const UsersDetails = () => {
             </FormControl>
           </div>
         </div>
-        <div class="flex justify-end mt-4">
+        <div className="flex justify-end mt-4">
           <Button type="submit" variant="outlined">
             Save
           </Button>
