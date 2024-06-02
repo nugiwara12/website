@@ -1,5 +1,5 @@
-import '../styles/globals.css'
-import Script from 'next/script'
+import "../styles/globals.css";
+import Script from "next/script";
 import { SWRConfig } from "swr";
 
 export default function App({ Component, pageProps }) {

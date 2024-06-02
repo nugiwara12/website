@@ -17,7 +17,7 @@ import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Collapse from "@mui/material/Collapse";
 import MailIcon from "@mui/icons-material/Mail";
-import InboxIcon from "@mui/icons-material/Mail";
+import InboxIcon from "@mui/icons-material/Inbox";
 
 import { RiArrowUpSLine, RiArrowDownSLine } from "react-icons/ri";
 import { MdDashboard } from "react-icons/md";
@@ -27,9 +27,12 @@ import { IoMdBriefcase } from "react-icons/io";
 import { TiMessage } from "react-icons/ti";
 import { IoIosSettings } from "react-icons/io";
 import { FaRegUser } from "react-icons/fa";
-import { useRouter } from "next/navigation";
+import { useRouter } from "next/router";
 import { usePathname } from "next/navigation";
 import BackTop from "./BacktoTop/BacktoTop";
+
+import LogoutIcon from "@mui/icons-material/Logout";
+import { useSession, signOut } from "next-auth/react";
 
 const drawerWidth = 240;
 
@@ -59,7 +62,9 @@ export default function Layout({ children }) {
   const router = useRouter();
   const pathname = usePathname();
 
-  console.log("Pathname", pathname);
+  const userLogout = () => {
+    signOut();
+  };
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
@@ -72,7 +77,6 @@ export default function Layout({ children }) {
   const drawer = (
     <div>
       <div className="flex justify-center items-center text-center ">
-        {" "}
         <img src="/logo/logo.png" alt="logo" className="h-32 w-32" />
       </div>
       <Divider />
@@ -85,7 +89,7 @@ export default function Layout({ children }) {
           { text: "Message", icon: <TiMessage /> },
           { text: "Setting", icon: <IoIosSettings /> },
           { text: "Profile", icon: <FaRegUser /> },
-        ].map(({ text, icon }, index) => (
+        ].map(({ text, icon }) => (
           <DrawerItem
             key={text}
             text={text}
@@ -131,24 +135,32 @@ export default function Layout({ children }) {
         sx={{
           width: { sm: `calc(100% - ${drawerWidth}px)` },
           ml: { sm: `${drawerWidth}px` },
-          bgcolor: "#ffffff",
-          color: "#2F2F2F",
+          bgcolor: "#FFFFFF",
+          color: "#2f2f2f",
         }}
       >
-        <Toolbar>
-          <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            edge="start"
-            onClick={handleDrawerToggle}
-            sx={{ mr: 2, display: { sm: "none" } }}
-          >
-            <MenuIcon />
-          </IconButton>
-          <Typography variant="h6" noWrap component="div">
-            Responsive drawer
-          </Typography>
-        </Toolbar>
+        <div className="flex justify-between">
+          <Toolbar>
+            <IconButton
+              color="inherit"
+              aria-label="open drawer"
+              edge="start"
+              onClick={handleDrawerToggle}
+              sx={{ mr: 2, display: { sm: "none" } }}
+            >
+              <MenuIcon />
+            </IconButton>
+
+            <Typography variant="h6" noWrap component="div">
+              Dashboard
+            </Typography>
+          </Toolbar>
+          <div className="mt-3 mr-3 cursor-pointer" onClick={userLogout}>
+            <Typography variant="h6" noWrap component="div">
+              <LogoutIcon /> Logout
+            </Typography>
+          </div>
+        </div>
       </AppBar>
       <Box
         component="nav"
