@@ -1,145 +1,161 @@
-import React from 'react'
+import React, { useState, useEffect } from "react";
+import { useRouter } from "next/router";
+import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
+import { usePathname } from "next/navigation";
+import app from "../config";
 
 const Navbar = () => {
-    return (
-        <nav className="flex-no-wrap relative flex w-full items-center justify-between bg-zinc-50 py-2 shadow-dark-mild dark:bg-neutral-700 lg:flex-wrap lg:justify-start lg:py-4">
+  const [open, setOpen] = useState(false);
+  const pathname = usePathname();
+  const [user, setUser] = useState(null);
 
-            <div className="relative flex items-center">
-                <a className="me-4 text-neutral-600 dark:text-white" href="#">
-                    <span className="[&>svg]:w-5">
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 24 24"
-                            fill="currentColor"
-                        >
-                            <path d="M2.25 2.25a.75.75 0 000 1.5h1.386c.17 0 .318.114.362.278l2.558 9.592a3.752 3.752 0 00-2.806 3.63c0 .414.336.75.75.75h15.75a.75.75 0 000-1.5H5.378A2.25 2.25 0 017.5 15h11.218a.75.75 0 00.674-.421 60.358 60.358 0 002.96-7.228.75.75 0 00-.525-.965A60.864 60.864 0 005.68 4.509l-.232-.867A1.875 1.875 0 003.636 2.25H2.25zM3.75 20.25a1.5 1.5 0 113 0 1.5 1.5 0 01-3 0zM16.5 20.25a1.5 1.5 0 113 0 1.5 1.5 0 01-3 0z" />
-                        </svg>
-                    </span>
-                </a>
-                <div
-                    className="relative"
-                    data-twe-dropdown-ref=""
-                    data-twe-dropdown-alignment="end"
-                >
-                    <a
-                        className="me-4 flex items-center text-neutral-600 dark:text-white"
-                        href="#"
-                        id="dropdownMenuButton1"
-                        role="button"
-                        data-twe-dropdown-toggle-ref=""
-                        aria-expanded="false"
-                    >
-                        <span className="[&>svg]:w-5">
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                viewBox="0 0 24 24"
-                                fill="currentColor"
-                            >
-                                <path
-                                    fillRule="evenodd"
-                                    d="M5.25 9a6.75 6.75 0 0113.5 0v.75c0 2.123.8 4.057 2.118 5.52a.75.75 0 01-.297 1.206c-1.544.57-3.16.99-4.831 1.243a3.75 3.75 0 11-7.48 0 24.585 24.585 0 01-4.831-1.244.75.75 0 01-.298-1.205A8.217 8.217 0 005.25 9.75V9zm4.502 8.9a2.25 2.25 0 104.496 0 25.057 25.057 0 01-4.496 0z"
-                                    clipRule="evenodd"
-                                />
-                            </svg>
-                        </span>
-                        <span className="absolute -mt-4 ms-2.5 rounded-full bg-danger px-[0.35em] py-[0.15em] text-[0.6rem] font-bold leading-none text-white">
-                            1
-                        </span>
-                    </a>
-                    <ul
-                        className="absolute z-[1000] float-left m-0 hidden min-w-max list-none overflow-hidden rounded-lg border-none bg-white bg-clip-padding text-left text-base shadow-lg data-[twe-dropdown-show]:block dark:bg-surface-dark"
-                        aria-labelledby="dropdownMenuButton1"
-                        data-twe-dropdown-menu-ref=""
-                    >
-                        <li>
-                            <a
-                                className="block w-full whitespace-nowrap bg-white px-4 py-2 text-sm font-normal text-neutral-700 hover:bg-zinc-200/60 focus:bg-zinc-200/60 focus:outline-none active:bg-zinc-200/60 active:no-underline dark:bg-surface-dark dark:text-white dark:hover:bg-neutral-800/25 dark:focus:bg-neutral-800/25 dark:active:bg-neutral-800/25"
-                                href="#"
-                                data-twe-dropdown-item-ref=""
-                            >
-                                Action
-                            </a>
-                        </li>
-                        <li>
-                            <a
-                                className="block w-full whitespace-nowrap bg-white px-4 py-2 text-sm font-normal text-neutral-700 hover:bg-zinc-200/60 focus:bg-zinc-200/60 focus:outline-none active:bg-zinc-200/60 active:no-underline dark:bg-surface-dark dark:text-white dark:hover:bg-neutral-800/25 dark:focus:bg-neutral-800/25 dark:active:bg-neutral-800/25"
-                                href="#"
-                                data-twe-dropdown-item-ref=""
-                            >
-                                Another action
-                            </a>
-                        </li>
-                        <li>
-                            <a
-                                className="block w-full whitespace-nowrap bg-white px-4 py-2 text-sm font-normal text-neutral-700 hover:bg-zinc-200/60 focus:bg-zinc-200/60 focus:outline-none active:bg-zinc-200/60 active:no-underline dark:bg-surface-dark dark:text-white dark:hover:bg-neutral-800/25 dark:focus:bg-neutral-800/25 dark:active:bg-neutral-800/25"
-                                href="#"
-                                data-twe-dropdown-item-ref=""
-                            >
-                                Something else here
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-                <div
-                    className="relative"
-                    data-twe-dropdown-ref=""
-                    data-twe-dropdown-alignment="end"
-                >
-                    <a
-                        className="flex items-center whitespace-nowrap transition duration-150 ease-in-out motion-reduce:transition-none"
-                        href="#"
-                        id="dropdownMenuButton2"
-                        role="button"
-                        data-twe-dropdown-toggle-ref=""
-                        aria-expanded="false"
-                    >
-                        {/* User avatar */}
-                        <img
-                            src="https://tecdn.b-cdn.net/img/new/avatars/2.jpg"
-                            className="rounded-full"
-                            style={{ height: 25, width: 25 }}
-                            alt=""
-                            loading="lazy"
-                        />
-                    </a>
-                    <ul
-                        className="absolute z-[1000] float-left m-0 hidden min-w-max list-none overflow-hidden rounded-lg border-none bg-white bg-clip-padding text-left text-base shadow-lg data-[twe-dropdown-show]:block dark:bg-surface-dark"
-                        aria-labelledby="dropdownMenuButton2"
-                        data-twe-dropdown-menu-ref=""
-                    >
-                        {/* Second dropdown menu items */}
-                        <li>
-                            <a
-                                className="block w-full whitespace-nowrap bg-white px-4 py-2 text-sm font-normal text-neutral-700 hover:bg-zinc-200/60 focus:bg-zinc-200/60 focus:outline-none active:bg-zinc-200/60 active:no-underline dark:bg-surface-dark dark:text-white dark:hover:bg-neutral-800/25 dark:focus:bg-neutral-800/25 dark:active:bg-neutral-800/25"
-                                href="#"
-                                data-twe-dropdown-item-ref=""
-                            >
-                                Action
-                            </a>
-                        </li>
-                        <li>
-                            <a
-                                className="block w-full whitespace-nowrap bg-white px-4 py-2 text-sm font-normal text-neutral-700 hover:bg-zinc-200/60 focus:bg-zinc-200/60 focus:outline-none active:bg-zinc-200/60 active:no-underline dark:bg-surface-dark dark:text-white dark:hover:bg-neutral-800/25 dark:focus:bg-neutral-800/25 dark:active:bg-neutral-800/25"
-                                href="#"
-                                data-twe-dropdown-item-ref=""
-                            >
-                                Another action
-                            </a>
-                        </li>
-                        <li>
-                            <a
-                                className="block w-full whitespace-nowrap bg-white px-4 py-2 text-sm font-normal text-neutral-700 hover:bg-zinc-200/60 focus:bg-zinc-200/60 focus:outline-none active:bg-zinc-200/60 active:no-underline dark:bg-surface-dark dark:text-white dark:hover:bg-neutral-800/25 dark:focus:bg-neutral-800/25 dark:active:bg-neutral-800/25"
-                                href="#"
-                                data-twe-dropdown-item-ref=""
-                            >
-                                Something else here
-                            </a>
-                        </li>
-                    </ul>
-                </div>
+  const auth = getAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setUser(user);
+      } else {
+        router.push("/"); // redirect to login page if the user is not authenticated
+      }
+    });
+    return () => unsubscribe();
+  }, [auth, router]);
+
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      router.push("/"); // redirect to the login page after logout
+    } catch (error) {
+      console.error("Error signing out:", error.message);
+    }
+  };
+
+  return (
+    <nav>
+      <div className="flex justify-center items-center">
+        <div className="bg-white dark:bg-gray-800 w-64 flex justify-center items-center">
+          <div
+            onClick={() => setOpen(!open)}
+            className={`relative border-b-4 border-transparent py-3 ${
+              open ? "border-indigo-700 transform transition duration-300" : ""
+            }`}
+          >
+            <div className="flex justify-center items-center space-x-3 cursor-pointer">
+              <div className="font-semibold dark:text-white text-gray-900 text-lg">
+                <div className="cursor-pointer">John Sarmiento</div>
+              </div>
+              <div className="w-12 h-12 rounded-full overflow-hidden border-2 dark:border-white border-gray-900">
+                <img
+                  src="https://images.unsplash.com/photo-1610397095767-84a5b4736cbd?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=750&q=80"
+                  alt=""
+                  className="w-full h-full object-cover"
+                />
+              </div>
             </div>
-        </nav>
-    )
-}
+            {open && (
+              <div
+                className="absolute w-60 px-5 py-3 dark:bg-gray-800 bg-white rounded-lg shadow border dark:border-transparent mt-5"
+                style={{
+                  transform: "scale(1)",
+                  opacity: "1",
+                  transition: "transform 0.1s ease-out, opacity 0.1s ease-out",
+                }}
+              >
+                <ul className="space-y-3 dark:text-white">
+                  <li className="font-medium">
+                    <a
+                      href="#"
+                      className="flex items-center transform transition-colors duration-200 border-r-4 border-transparent hover:border-indigo-700"
+                    >
+                      <div className="mr-3">
+                        <svg
+                          className="w-6 h-6"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                          ></path>
+                        </svg>
+                      </div>
+                      Account
+                    </a>
+                  </li>
+                  <li className="font-medium">
+                    <a
+                      href="#"
+                      className="flex items-center transform transition-colors duration-200 border-r-4 border-transparent hover:border-indigo-700"
+                    >
+                      <div className="mr-3">
+                        <svg
+                          className="w-6 h-6"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
+                          ></path>
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                          ></path>
+                        </svg>
+                      </div>
+                      Setting
+                    </a>
+                  </li>
+                  <hr className="dark:border-gray-700" />
+                  <li className="font-medium">
+                    <a
+                      href="#"
+                      className="flex items-center transform transition-colors duration-200 border-r-4 border-transparent hover:border-red-600"
+                    >
+                      <div className="mr-3 text-red-600">
+                        <svg
+                          className="w-6 h-6"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                          ></path>
+                        </svg>
+                      </div>
+                      <button
+                        onClick={handleLogout}
+                        className=" text-black font-bold py-2 px-4 rounded"
+                      >
+                        Log Out
+                      </button>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </nav>
+  );
+};
 
-export default Navbar
+export default Navbar;

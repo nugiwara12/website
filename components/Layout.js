@@ -1,6 +1,6 @@
 "use client";
 
-import * as React from "react";
+import React, { useEffect, useState } from "react";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -18,6 +18,7 @@ import Typography from "@mui/material/Typography";
 import Collapse from "@mui/material/Collapse";
 import MailIcon from "@mui/icons-material/Mail";
 import InboxIcon from "@mui/icons-material/Inbox";
+import { getAuth, signOut, onAuthStateChanged } from "firebase/auth";
 
 import { RiArrowUpSLine, RiArrowDownSLine } from "react-icons/ri";
 import { MdDashboard } from "react-icons/md";
@@ -27,12 +28,10 @@ import { IoMdBriefcase } from "react-icons/io";
 import { TiMessage } from "react-icons/ti";
 import { IoIosSettings } from "react-icons/io";
 import { FaRegUser } from "react-icons/fa";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { usePathname } from "next/navigation";
 import BackTop from "./BacktoTop/BacktoTop";
-
-import LogoutIcon from "@mui/icons-material/Logout";
-import { useSession, signOut } from "next-auth/react";
+import Navbar from "./Navbar";
 
 const drawerWidth = 240;
 
@@ -59,11 +58,30 @@ const DrawerItem = ({ text, icon, pathname, onClick }) => {
 export default function Layout({ children }) {
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [isCollapse, setIsCollapse] = React.useState(false);
-  const router = useRouter();
   const pathname = usePathname();
 
-  const userLogout = () => {
-    signOut();
+  const auth = getAuth();
+  const router = useRouter();
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setUser(user);
+      } else {
+        router.push("/"); //redirect to login page if the user is not authenticated
+      }
+    });
+    return () => unsubscribe();
+  }, [auth, router]);
+
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      router.push("/"); //redirect to the login page after logout
+    } catch (error) {
+      console.error("Error signing out:", error.message);
+    }
   };
 
   const handleDrawerToggle = () => {
@@ -139,7 +157,7 @@ export default function Layout({ children }) {
           color: "#2f2f2f",
         }}
       >
-        <div className="flex justify-between">
+        <div className="flex justify-between items-center w-full">
           <Toolbar>
             <IconButton
               color="inherit"
@@ -150,15 +168,12 @@ export default function Layout({ children }) {
             >
               <MenuIcon />
             </IconButton>
-
             <Typography variant="h6" noWrap component="div">
               Dashboard
             </Typography>
           </Toolbar>
-          <div className="mt-3 mr-3 cursor-pointer" onClick={userLogout}>
-            <Typography variant="h6" noWrap component="div">
-              <LogoutIcon /> Logout
-            </Typography>
+          <div className="flex items-center space-x-4 pr-4">
+            <Navbar />
           </div>
         </div>
       </AppBar>
@@ -196,7 +211,6 @@ export default function Layout({ children }) {
           open
         >
           {drawer}
-          <BackTop />
         </Drawer>
       </Box>
       <Box
