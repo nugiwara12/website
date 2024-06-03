@@ -220,40 +220,57 @@ export default function UserList() {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {data
-                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                    .map((row) => (
-                      <TableRow
-                        hover
-                        role="checkbox"
-                        tabIndex={-1}
-                        key={row.id}
-                      >
-                        <TableCell align="right">{row.id}</TableCell>
-                        <TableCell align="right">{row.name}</TableCell>
-                        <TableCell align="right">{row.email}</TableCell>
-                        <TableCell align="right">{row.role}</TableCell>
-                        <TableCell align="right">
-                          {dateFormatter(row.created_at)}
-                        </TableCell>
-                        <TableCell align="right">
-                          <div className="flex justify-center space-x-3">
-                            <div
-                              className="cursor-pointer bg-green-600 text-white rounded-full p-2 flex items-center justify-center w-8 h-8"
-                              onClick={() => editRecord(row)}
-                            >
-                              <FaEdit />
+                  {data.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={6} align="center">
+                        <div className="flex justify-center">
+                          <img
+                            src="gif/notfound.gif"
+                            alt="Not Found"
+                            className="h-40 w-40"
+                          />
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ) : (
+                    data
+                      .slice(
+                        page * rowsPerPage,
+                        page * rowsPerPage + rowsPerPage
+                      )
+                      .map((row) => (
+                        <TableRow
+                          hover
+                          role="checkbox"
+                          tabIndex={-1}
+                          key={row.id}
+                        >
+                          <TableCell align="right">{row.id}</TableCell>
+                          <TableCell align="right">{row.name}</TableCell>
+                          <TableCell align="right">{row.email}</TableCell>
+                          <TableCell align="right">{row.role}</TableCell>
+                          <TableCell align="right">
+                            {dateFormatter(row.created_at)}
+                          </TableCell>
+                          <TableCell align="right">
+                            <div className="flex justify-center space-x-3">
+                              <div
+                                className="cursor-pointer bg-green-600 text-white rounded-full p-2 flex items-center justify-center w-8 h-8"
+                                onClick={() => editRecord(row)}
+                              >
+                                <FaEdit />
+                              </div>
+                              <div
+                                className="cursor-pointer bg-red-600 text-white rounded-full p-2 flex items-center justify-center w-8 h-8"
+                                onClick={() => deleteRecord(row)}
+                              >
+                                <RiDeleteBin7Fill />
+                              </div>
                             </div>
-                            <div
-                              className="cursor-pointer bg-red-600 text-white rounded-full p-2 flex items-center justify-center w-8 h-8"
-                              onClick={() => deleteRecord(row)}
-                            >
-                              <RiDeleteBin7Fill />
-                            </div>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))}
+                          </TableCell>
+                        </TableRow>
+                      ))
+                  )}
                 </TableBody>
               </Table>
             </TableContainer>

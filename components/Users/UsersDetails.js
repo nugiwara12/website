@@ -165,6 +165,18 @@ const UsersDetails = ({ handleAddUserClose, rows }) => {
             </p>
           </div>
           <div>
+            <TextField
+              fullWidth
+              size="small"
+              label="Password"
+              {...register("password")}
+              variant="outlined"
+            />
+            <p className="text-red-500 text-md ml-1 mt-2">
+              {errors.password?.message}
+            </p>
+          </div>
+          <div>
             <FormControl fullWidth>
               <InputLabel>Role</InputLabel>
               <Select

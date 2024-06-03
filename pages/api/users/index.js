@@ -1,4 +1,5 @@
 import { query } from "@/lib/db";
+import bcrypt from "bcryptjs";
 
 class UsersHandler {
   async GET() {
@@ -17,20 +18,24 @@ class UsersHandler {
 
   async POST(data) {
     try {
-      const { name, email, role } = data;
+      const { name, email, password, role } = data;
 
       // Validate input data
-      if (!name || !email || !role) {
-        throw new Error("Missing parameters: name, email, role");
+      if (!name || !email || !password || !role) {
+        throw new Error("Missing parameters: name, email, password, role");
       }
 
       // Log the input data
       console.log("POST Data:", data);
 
+      // Hash the password
+      const hashedPassword = await bcrypt.hash(password, 10);
+
       // Execute the query to insert the user
       const updateUsers = await query({
-        query: "INSERT INTO users (name, email, role) VALUES (?, ?, ?)",
-        values: [name, email, role],
+        query:
+          "INSERT INTO users (name, email, password, role) VALUES (?, ?, ?, ?)",
+        values: [name, email, hashedPassword, role],
       });
 
       // Check the result of the query execution
@@ -38,7 +43,7 @@ class UsersHandler {
       const message = result ? "success" : "error";
 
       // Log the result and the user data
-      const user = { name, email, role };
+      const user = { name, email, password: hashedPassword, role };
       console.log("POST Result:", result, user);
       return { status: 200, message, data: user };
     } catch (error) {
@@ -49,41 +54,27 @@ class UsersHandler {
     }
   }
 
-  //   try {
-  //     const { name, email, role } = data;
-  //     if (!name || !email || !role) {
-  //       throw new Error("Missing parameters: name, email, role");
-  //     }
-  //     console.log("POST Data:", data);
-  //     const updateUsers = await query({
-  //       query: "INSERT INTO users (name, email, role) VALUES (?, ?, ?)",
-  //       values: [name, email, role],
-  //     });
-  //     const result = updateUsers.affectedRows;
-  //     let message = result ? "success" : "error";
-  //     const user = { name, email, role };
-  //     console.log("POST Result:", result, user);
-  //     return { status: 200, message, data: user };
-  //   } catch (error) {
-  //     console.error("POST Error:", error);
-  //     return { status: 500, error: error.message };
-  //   }
-  // }
-
   async PUT(data) {
     try {
-      const { id, name, email, role } = data;
-      if (!id || !name || !email || !role) {
-        throw new Error("Missing parameters: id, name, email, or role");
+      const { id, name, email, password, role } = data;
+      if (!id || !name || !email || !password || !role) {
+        throw new Error(
+          "Missing parameters: id, name, email, password, or role"
+        );
       }
       console.log("PUT Data:", data); // Log request data
+
+      // Hash the password
+      const hashedPassword = await bcrypt.hash(password, 10);
+
       const updateUsers = await query({
-        query: "UPDATE users SET name = ?, email = ?, role = ? WHERE id = ?",
-        values: [name, email, role, id],
+        query:
+          "UPDATE users SET name = ?, email = ?, password = ?, role = ? WHERE id = ?",
+        values: [name, email, hashedPassword, role, id],
       });
       const result = updateUsers.affectedRows;
-      let message = result ? "success" : "error";
-      const user = { id, name, email, role };
+      const message = result ? "success" : "error";
+      const user = { id, name, email, password: hashedPassword, role };
       console.log("PUT Result:", result, user); // Log result and user data
       return { status: 200, message, data: user };
     } catch (error) {
@@ -104,7 +95,7 @@ class UsersHandler {
         values: [id],
       });
       const result = deleteUsers.affectedRows;
-      let message = result ? "success" : "error";
+      const message = result ? "success" : "error";
       const user = { id };
       console.log("DELETE Result:", result, user); // Log result and user data
       return { status: 200, message, data: user };
