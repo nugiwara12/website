@@ -1,13 +1,15 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/router";
 import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
 import { usePathname } from "next/navigation";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import app from "../config";
 
 const Navbar = () => {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
   const [user, setUser] = useState(null);
+  const dropdownRef = useRef(null);
 
   const auth = getAuth();
   const router = useRouter();
@@ -22,6 +24,19 @@ const Navbar = () => {
     });
     return () => unsubscribe();
   }, [auth, router]);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   const handleLogout = async () => {
     try {
@@ -48,7 +63,7 @@ const Navbar = () => {
               </div>
               <div className="w-12 h-12 rounded-full overflow-hidden border-2 dark:border-white border-gray-900">
                 <img
-                  src="https://images.unsplash.com/photo-1610397095767-84a5b4736cbd?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=750&q=80"
+                  src="profile/luffy.png"
                   alt=""
                   className="w-full h-full object-cover"
                 />
@@ -56,6 +71,7 @@ const Navbar = () => {
             </div>
             {open && (
               <div
+                ref={dropdownRef}
                 className="absolute w-60 px-5 py-3 dark:bg-gray-800 bg-white rounded-lg shadow border dark:border-transparent mt-5"
                 style={{
                   transform: "scale(1)",
@@ -70,22 +86,9 @@ const Navbar = () => {
                       className="flex items-center transform transition-colors duration-200 border-r-4 border-transparent hover:border-indigo-700"
                     >
                       <div className="mr-3">
-                        <svg
-                          className="w-6 h-6"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                            d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                          ></path>
-                        </svg>
+                        <AccountCircleIcon />
                       </div>
-                      Account
+                      Profile
                     </a>
                   </li>
                   <li className="font-medium">
