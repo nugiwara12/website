@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import Image from "next/image";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -44,8 +45,7 @@ const DrawerItem = ({ text, icon, pathname, onClick }) => {
       className={isActive ? "text-sky-500 bg-slate-100" : "text-slate-700"}
       onClick={() => {
         onClick("/" + text.toLowerCase());
-      }}
-    >
+      }}>
       <ListItemButton>
         <ListItemIcon>{icon}</ListItemIcon>
         <ListItemText primary={text} />
@@ -95,7 +95,7 @@ export default function Layout({ children }) {
   const drawer = (
     <div>
       <div className="flex justify-center items-center text-center ">
-        <img src="/logo/logo.png" alt="logo" className="h-32 w-32" />
+        <Image src="/logo/logo.png" width={200} height={200} alt="logo" />
       </div>
       <Divider />
       <List>
@@ -131,8 +131,7 @@ export default function Layout({ children }) {
           {["Support", "Contact", "Docs"].map((text, index) => (
             <ListItem key={text} disablePadding>
               <ListItemButton
-                onClick={() => router.push("/" + text.toLowerCase())}
-              >
+                onClick={() => router.push("/" + text.toLowerCase())}>
                 <ListItemIcon>
                   {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
                 </ListItemIcon>
@@ -155,8 +154,7 @@ export default function Layout({ children }) {
           ml: { sm: `${drawerWidth}px` },
           bgcolor: "#FFFFFF",
           color: "#2f2f2f",
-        }}
-      >
+        }}>
         <div className="flex justify-between items-center w-full">
           <Toolbar>
             <IconButton
@@ -164,8 +162,7 @@ export default function Layout({ children }) {
               aria-label="open drawer"
               edge="start"
               onClick={handleDrawerToggle}
-              sx={{ mr: 2, display: { sm: "none" } }}
-            >
+              sx={{ mr: 2, display: { sm: "none" } }}>
               <MenuIcon />
             </IconButton>
             <Typography variant="h6" noWrap component="div">
@@ -180,8 +177,7 @@ export default function Layout({ children }) {
       <Box
         component="nav"
         sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
-        aria-label="mailbox folders"
-      >
+        aria-label="mailbox folders">
         <Drawer
           variant="temporary"
           open={mobileOpen}
@@ -195,8 +191,7 @@ export default function Layout({ children }) {
               boxSizing: "border-box",
               width: drawerWidth,
             },
-          }}
-        >
+          }}>
           {drawer}
         </Drawer>
         <Drawer
@@ -208,8 +203,7 @@ export default function Layout({ children }) {
               width: drawerWidth,
             },
           }}
-          open
-        >
+          open>
           {drawer}
         </Drawer>
       </Box>
@@ -219,8 +213,7 @@ export default function Layout({ children }) {
           flexGrow: 1,
           p: 3,
           width: { sm: `calc(100% - ${drawerWidth}px)` },
-        }}
-      >
+        }}>
         <Toolbar />
         {children}
       </Box>
