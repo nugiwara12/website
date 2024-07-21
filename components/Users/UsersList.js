@@ -150,10 +150,10 @@ export default function UserList() {
     }
   };
 
-  const dateFormatter = (dateString) => {
-    const parsedData = new Date(dateString);
-    return format(parsedData, "MMMM d, yyy h:mm a");
-  };
+  // const dateFormatter = (dateString) => {
+  //   const parsedData = new Date(dateString);
+  //   return format(parsedData, "MMMM d, yyy h:mm a");
+  // };
 
   return (
     <>
@@ -179,8 +179,7 @@ export default function UserList() {
               {searchQuery && (
                 <button
                   className="absolute right-2 grid place-items-center h-full w-8 text-gray-400 hover:text-gray-600"
-                  onClick={clearSearch}
-                >
+                  onClick={clearSearch}>
                   ✕
                 </button>
               )}
@@ -189,8 +188,7 @@ export default function UserList() {
             <Button
               variant="outlined"
               onClick={() => addRecord()}
-              startIcon={<AddCircleIcon />}
-            >
+              startIcon={<AddCircleIcon />}>
               Add User
             </Button>
           </div>
@@ -243,27 +241,22 @@ export default function UserList() {
                           hover
                           role="checkbox"
                           tabIndex={-1}
-                          key={row.id}
-                        >
+                          key={row.id}>
                           <TableCell align="right">{row.id}</TableCell>
                           <TableCell align="right">{row.name}</TableCell>
                           <TableCell align="right">{row.email}</TableCell>
                           <TableCell align="right">{row.role}</TableCell>
-                          <TableCell align="right">
-                            {dateFormatter(row.created_at)}
-                          </TableCell>
+                          <TableCell align="right">{row.createdAt}</TableCell>
                           <TableCell align="right">
                             <div className="flex justify-center space-x-3">
                               <div
                                 className="cursor-pointer bg-green-600 text-white rounded-full p-2 flex items-center justify-center w-8 h-8"
-                                onClick={() => editRecord(row)}
-                              >
+                                onClick={() => editRecord(row)}>
                                 <FaEdit />
                               </div>
                               <div
                                 className="cursor-pointer bg-red-600 text-white rounded-full p-2 flex items-center justify-center w-8 h-8"
-                                onClick={() => deleteRecord(row)}
-                              >
+                                onClick={() => deleteRecord(row)}>
                                 <RiDeleteBin7Fill />
                               </div>
                             </div>
